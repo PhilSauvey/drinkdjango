@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<title>My Drinks</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'drinks/style.css' %}" />
+</head>
+<body>
+<div id="my_main">
+<ul class="navigation">
+<li class="navg"><a href="{% url 'drinks:index'%}" class="nav">Drink Library</a></li>
+<li class="navg"><a href="{% url 'drinks:search'%}" class="nav">Search By Ingredients</a></li>
+{% if request.COOKIES.drink and username%}
+<li class="navg"><a href="{% url 'drinks:detail' request.COOKIES.drink %}" class="nav">View Last Drink</a></li>
+{%endif%}
+{% if request.COOKIES.searched and username%}
+<li class="navg"><a href="{% url 'drinks:results' %}" class="nav">View Last Search Results</a></li>
+{%endif%}
+</ul>
+<h3>My Drink Page</h3>
+
+{%if drinks%}	
+	{%for drink in drinks%}
+		<a href="{% url 'drinks:detail' drink.drink_slug%}" class="drink_button">{{drink.drink_name}}</a><br/>
+	{%endfor%}
+{%else%}
+	<p>You have not added any drinks yet</p>
+{%endif%}
+</div>
+</body>
+</html>

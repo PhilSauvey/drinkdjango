@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<title>New User</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'drinks/style.css' %}" />
+</head>
+<body>
+<div id="new_main">
+<ul class="navigation">
+<li class="navg"><a href="{% url 'drinks:index'%}" class="nav">Drink Library</a></li>
+<li class="navg"><a href="{% url 'drinks:search'%}" class="nav">Search By Ingredients</a></li>
+{%if username%}
+	<li class="navg"><a href="{% url 'drinks:mydrinks'%}" class="nav">My Drinks Page</a></li>
+{%endif%}
+</ul>
+
+
+<h2>Create New User</h2>
+
+	{%if message%}<h3>{{message}}</h3>{%endif%}
+	<form method="post" action="{%url 'drinks:newuser'%}">
+	{% csrf_token %}
+	{% csrf_token %}
+	<table class="new_user">
+	<tr><td>Username:</td><td><input type="text" id="username" name="username" required/></td></tr>
+	<tr><td>Password:</td><td><input type="password" id="password" name="password" required/></td></tr>
+	<tr><td></td><td><input type="submit" value="Create New User"/></td></tr></table></form>
+
+</div>
+</body>
+</html>

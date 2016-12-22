@@ -1,0 +1,31 @@
+from drinks.models import Drink, Ingredients, AllIngredients, User, DrinkLink, UserIng, DrinkType
+
+w=Drink.query().fetch()
+for a in w:
+    a.key.delete()
+
+x=Ingredients.query().fetch()
+for b in x:
+    b.key.delete()
+
+y=AllIngredients.query().fetch()
+for c in y:
+    c.key.delete()
+
+z=User.query().fetch()
+for d in z:
+    d.key.delete()
+
+t=DrinkLink.query().fetch()
+for e in t:
+    e.key.delete()
+
+u=UserIng.query().fetch()
+for f in u:
+    f.key.delete()
+
+v=DrinkType.query().fetch()
+for g in v:
+    g.key.delete()
+
+print "Database Empty"

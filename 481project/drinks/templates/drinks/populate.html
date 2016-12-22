@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head>
+<title>New User</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'drinks/style.css' %}" />
+</head>
+<body>
+<div class="detail_main">
+<li class="navg"><a href="{% url 'drinks:index'%}" class="nav">Drink Library</a></li>
+{{message}}
+</div>
+</body>
+</html>

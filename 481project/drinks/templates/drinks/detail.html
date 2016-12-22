@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<title>{{drink}} Details</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'drinks/style.css' %}" />
+</head>
+<body>
+<div class="detail_main">
+{%if username%}
+	<form method="post" action="{%url 'drinks:detail' drink.drink_slug %}">
+	{% csrf_token %}
+{%else%}
+	<form method="get" action="{%url 'drinks:newuser'%}">
+	{% csrf_token %}
+{%endif%}
+<ul class="navigation">
+<li class="navg"><a href="{% url 'drinks:index'%}" class="nav">Drink Library</a></li>
+<li class="navg"><a href="{% url 'drinks:search'%}" class="nav">Search By Ingredients</a></li>
+{% if request.COOKIES.searched and username%}
+<li class="navg"><a href="{% url 'drinks:results' %}" class="nav">View Last Search Results</a></li>
+{%endif%}
+{%if username%}	
+	<li class="navg"><a href="{% url 'drinks:mydrinks'%}" class="nav">My Drinks Page</a></li>
+	<li class="navg"><input type="submit" name="logout" value="Logout" class="nav"/>
+	</li></ul></form>
+{%else%}
+	<li class="navg"><input type="submit" value="Create New User" class="nav"/></li>
+	</ul>
+	</form>
+	<form method="post" action="{% url 'drinks:detail' drink.drink_slug%}">
+	{% csrf_token %}
+	<table class="login">
+	<tr><td>Username:</td><td><input type="text" id="username" name="username" required/></td></tr>
+	<tr><td>Password:</td><td><input type="password" id="password" name="password" required/></td></tr>
+	<tr><td></td><td><input type="submit" value="Login"/></td></tr></table></form>
+{%endif%}
+
+{{message}}
+
+<h1>{{drink}}</h1>
+<table class="ings">
+{% for ing in ing_list%}
+	<tr><td class="ing_name">{{ing.ing_name}}:</td><td class="ing_amnt">{{ing.ing_amount}}</td></tr>
+{%endfor%}
+</table>
+<p>Special Instructions: {{drink.drink_inst}}</p>
+<p>Garnish: {{drink.drink_garnish}}</p>
+<p>Glass:</p>
+<p>{%for i in img_url%}
+	{%if forloop.counter|divisibleby:2%}
+		<span id="or">or</span>
+	{%endif%}
+	<img src="{{i}}" height="200" alt="{{drink}}"/>
+	{%endfor%}
+</p>
+{%if username%}	
+<form method="post" action="{% url 'drinks:detail' drink.drink_slug%}">
+		{% csrf_token %}
+		<input type="hidden" name="add_drink" value="add_drink"/>
+		<input type="submit" value="Add Drink to my List"/>
+{%endif%}
+</form>
+</div>
+</body>
+</html>

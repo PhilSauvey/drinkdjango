@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<title>Drink Database Index</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'drinks/style.css' %}" />
+</head>
+<body>
+<div class="lib_main">
+{%if message%}<p><strong>{{message}}</strong></p>{%endif%}
+
+
+{%if username%}
+	<form method="post" action="{% url 'drinks:index'%}">
+	{% csrf_token %}
+{%else%}
+	<form method="get" action="{%url 'drinks:newuser'%}">
+	{% csrf_token %}
+{%endif%}
+<ul class="navigation">
+<li class="navg"><a href="{% url 'drinks:search'%}" class="nav">Search By Ingredients</a></li>
+{% if request.COOKIES.drink and username%}
+<li class="navg"><a href="{% url 'drinks:detail' request.COOKIES.drink %}" class="nav">View Last Drink</a></li>
+{%endif%}
+{% if request.COOKIES.searched and username%}
+<li class="navg"><a href="{% url 'drinks:results' %}" class="nav">View Last Search Results</a></li>
+{%endif%}
+{%if username%}	
+	<li class="navg"><a href="{% url 'drinks:mydrinks'%}" class="nav">My Drinks Page</a></li>
+	<li class="navg"><input type="submit" name="logout" value="Logout" class="nav"/>
+	</li></ul></form>
+	<h3> Welcome {{username.username}}</h3>
+	
+	
+{%else%}
+	<li class="navg"><input type="submit" value="Create New User" class="nav"/></li>
+	
+	</ul>
+	</form>	
+	<form method="post" action="{% url 'drinks:index'%}">
+	{% csrf_token %}
+	<table class="login">
+	<tr><td>Username:</td><td><input type="text" id="username" name="username" required/></td></tr>
+	<tr><td>Password:</td><td><input type="password" id="password" name="password" required/></td></tr>
+	<tr><td></td><td><input type="submit" value="Login"/></td></tr></table></form>
+{%endif%}
+
+<form method="get" action="{%url 'drinks:index'%}">
+<select name="type">
+<option value="">&nbsp;</option>
+{% for t in types%}
+<option value="{{t.drink_type}}">{{t.drink_type}}</option>
+{%endfor%}
+</select>
+<input type="submit" value="View Drinks"/>
+
+</form>
+
+{% if drink_lists%}
+	<div class="type">
+	<h4>{{drink_lists.0.drink_type}} Cocktails</h4>
+	
+	{%for d in drink_lists.1%}
+		<a href="{% url 'drinks:detail' d.drink_slug%}" class="drink_button">{{d.drink_name}}</a><br/>
+	{%endfor%}
+	</div>
+{%else%}
+	<h4> Please Select A Drink Category</h4>
+{%endif%}
+</div>
+</body>
+</html>

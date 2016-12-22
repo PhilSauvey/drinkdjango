@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<title>Drink Database Search Page</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'drinks/style.css' %}" />
+</head>
+<body>
+<div id="search_main">
+<ul class="navigation">
+<li class="navg"><a href="{% url 'drinks:index'%}" class="nav">Drink Library</a></li>
+{%if request.COOKIES.user%}
+	<li class="navg"><a href="{% url 'drinks:mydrinks'%}" class="nav">My Drinks Page</a></li>
+{%endif%}
+{% if request.COOKIES.drink and request.COOKIES.user%}
+<li class="navg"><a href="{% url 'drinks:detail' request.COOKIES.drink %}" class="nav">View Last Drink</a></li>
+{%endif%}
+{% if request.COOKIES.searched and request.COOKIES.user%}
+<li class="navg"><a href="{% url 'drinks:results' %}" class="nav">View Last Search Results</a></li>
+{%endif%}
+</ul>
+<h2>Search By Ingredients</h2>
+{%if error_message%}<p><strong>{{error_message}}</strong></p>{%endif%}
+
+<form action = "{% url 'drinks:results' %}" method="post">
+{% csrf_token %}
+<table class="search">
+{% for ingredient in ing_list%}
+	{% if forloop.counter0|divisibleby:3 %}<tr>{% endif %}
+		{% if ingredient.ing_name in user_ing%}
+			<td class="search"><input class="search_check" type="checkbox" name='{{ingredient.ing_name}}' id='{{forloop.counter}}' value='{{ingredient.ing_name}}' checked/>
+			<label for='{{forloop.counter}}'>{{ingredient.ing_name}}</label></td>
+		{%else%}
+			<td class="search"><input class="search_check" type="checkbox" name='{{ingredient.ing_name}}' id='{{forloop.counter}}' value='{{ingredient.ing_name}}'/>
+			<label for='{{forloop.counter}}'>{{ingredient.ing_name}}</label></td>
+		{%endif%}
+	{% if forloop.counter|divisibleby:3%}</tr>
+	{%elif forloop.last%}<td class="search"></td><td class="search"></td></tr>{% endif %}
+{%endfor%}
+<tr><td></td><td></td><td><input type="submit" value="Search"/></td></tr></table>
+</form>
+</div>
+</body>
+</html>
