@@ -72,7 +72,7 @@ if normal_environment:
   from google.appengine.api import datastore_types
   from google.appengine.api import memcache
   from google.appengine.api import namespace_manager
-  from google.appengine.api import prospective_search
+  #from google.appengine.api import prospective_search
   from google.appengine.api import taskqueue
   from google.appengine.api import urlfetch
   from google.appengine.api import users
