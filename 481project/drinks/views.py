@@ -284,18 +284,3 @@ def createUser(request):
 	if status==1:
 		response.set_cookie('user', username)
 	return response
-		
-def populate(request):
-	import openpyxl
-	from openpyxl import load_workbook
-	book = load_workbook('database.xlsx')
-	ingsheet = book['Sheet2']
-	index=0
-	for k in range(1,ingsheet.max_row+1):
-		q= AllIngredients(ing_name=str(ingsheet.cell(row=k, column=1).value).encode())
-		q.index=index			
-		q.put()
-		index+=1
-	context={}	
-	response=render(request, "drinks/populate.html",context)
-	return response
