@@ -9,6 +9,7 @@
 <div class="detail_main">
 <li class="navg"><a href="{% url 'drinks:index'%}" class="nav">Drink Library</a></li>
 <form method="post" action="{% url 'drinks:populate'%}">
+{% csrf_token %}
 <input type="text" name="number"/>
 <input type="submit"/>
 </form>
