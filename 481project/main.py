@@ -16,6 +16,8 @@
 #
 
 from django.core.wsgi import get_wsgi_application
+from google.appengine.ext import ndb
+
 import openpyxl
 	from openpyxl import load_workbook
 	book = load_workbook('database.xlsx')
