@@ -1,5 +1,5 @@
 import openpyxl
-import google.appengine
+import google
 
 print "done"
 
