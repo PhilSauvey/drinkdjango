@@ -293,7 +293,7 @@ def populate(request):
 	typesheet=book['Sheet3']
 	sheet = book['Sheet1']
 	if request.method=="POST":
-		number=int(self.request.get("number"))
+		number=int(request.POST("number"))
 		type_key=ndb.Key(DrinkType,str(sheet.cell(row=number,column=4).value).encode())
 		a = Drink(parent=type_key)
 		a.drink_name=str(sheet.cell(row=number,column=1).value).encode()
