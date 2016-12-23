@@ -1,5 +1,9 @@
 import openpyxl
-import ndb
+import google
+
+print google.__file__
+
+"""
 
 from openpyxl import load_workbook
 book = load_workbook('database.xlsx')
@@ -30,4 +34,4 @@ for k in range(1,ingsheet.max_row+1):
 	q= AllIngredients(ing_name=str(ingsheet.cell(row=k, column=1).value).encode())
 	q.index=index			
 	q.put()
-	index+=1
+	index+=1"""
