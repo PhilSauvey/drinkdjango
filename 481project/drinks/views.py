@@ -292,7 +292,7 @@ def populate(request):
 	ingsheet = book['Sheet2']
 	typesheet=book['Sheet3']
 	sheet = book['Sheet1']
-	for number in range(155,255):
+	for number in range(255,355):
 		type_key=ndb.Key(DrinkType,str(sheet.cell(row=number,column=4).value).encode())
 		a = Drink(parent=type_key)
 		a.drink_name=str(sheet.cell(row=number,column=1).value).encode()
