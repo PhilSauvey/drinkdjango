@@ -1,4 +1,4 @@
-from lib import openpyxl
+import openpyxl
 from google.appengine.ext import ndb
 
 from openpyxl import load_workbook
