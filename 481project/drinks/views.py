@@ -292,7 +292,7 @@ def populate(request):
 	ingsheet = book['Sheet2']
 	typesheet=book['Sheet3']
 	sheet = book['Sheet1']
-	if request.method=="POST":
+	for number in range(5,55)
 		number=int(request.POST["number"])
 		type_key=ndb.Key(DrinkType,str(sheet.cell(row=number,column=4).value).encode())
 		a = Drink(parent=type_key)
@@ -308,7 +308,8 @@ def populate(request):
 				n.ing_name=str(sheet.cell(row=1, column=i).value).encode()
 				n.ing_amount=str(sheet.cell(row=number, column=i).value).encode()
 				n.put()
-		
+	
+"""	
 	else:
 		for i in range(1,typesheet.max_row+1):
 			t=DrinkType()
@@ -320,7 +321,7 @@ def populate(request):
 			q.index=index			
 			q.put()
 			index+=1
-	
+	"""
 	context={}	
 	response=render(request, "drinks/populate.html",context)
 	return response
