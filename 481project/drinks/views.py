@@ -314,7 +314,7 @@ def populate(request):
 			n.ing_name=str(sheet.cell(row=1, column=i).value).encode()
 			n.ing_amount=str(sheet.cell(row=index, column=i).value).encode()
 			n.put()
-	index+=1
+	global index += 1
 	"""
 	index=0
 	for k in range(1,ingsheet.max_row+1):
@@ -323,5 +323,4 @@ def populate(request):
 		q.put()
 		index+=1
 	"""
-	context={'message':"You have succesfully added a drink to the site"}
-	return render(request, "drinks/populate.html",context)
+	redirect('/populate')
