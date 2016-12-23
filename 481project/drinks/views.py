@@ -314,7 +314,7 @@ def populate(request):
 			n.ing_name=str(sheet.cell(row=1, column=i).value).encode()
 			n.ing_amount=str(sheet.cell(row=index, column=i).value).encode()
 			n.put()
-	global index += 1
+	index += 1
 	"""
 	index=0
 	for k in range(1,ingsheet.max_row+1):
@@ -323,4 +323,4 @@ def populate(request):
 		q.put()
 		index+=1
 	"""
-	redirect('/populate')
+	return redirect('/populate')
