@@ -124,7 +124,7 @@ def detail(request, drink_slug):
 	drink_key=drink.key
 	ing_list=Ingredients.query(ancestor=drink_key).fetch()
 	if drink.drink_glass=="See Note":
-		image_url = ["/static/drinks/Rocks_Glass.jpg","/static/drinks/Cocktail_Glass.png"]
+		image_url = ["/static/drinks/Rocks_Glass.png","/static/drinks/Cocktail_Glass.png"]
 	else:
 		image_url = [glasses[drink.drink_glass]]
 	response = render(request, "drinks/detail.html",{"drink":drink,"ing_list":ing_list,"img_url":image_url})
