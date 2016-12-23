@@ -290,7 +290,6 @@ def createUser(request):
 		
 def populate(request):
 	import openpyxl
-	import google.appengine
 	global index
 	from openpyxl import load_workbook
 	book = load_workbook('database.xlsx')
@@ -301,7 +300,6 @@ def populate(request):
 		t=DrinkType()
 		t.drink_type=str(typesheet.cell(row=i,column=1).value).encode()
 		t.put()"""
-	for j in range (2,sheet.max_row+1):
 	type_key=ndb.Key(DrinkType,str(sheet.cell(row=index,column=4).value).encode())
 	a = Drink(parent=type_key)
 	a.drink_name=str(sheet.cell(row=index,column=1).value).encode()
