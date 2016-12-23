@@ -306,21 +306,7 @@ def populate(request):
 				n=Ingredients(parent=drink_key)
 				n.ing_name=str(sheet.cell(row=1, column=i).value).encode()
 				n.ing_amount=str(sheet.cell(row=number, column=i).value).encode()
-				n.put()
-	
-"""	
-	else:
-		for i in range(1,typesheet.max_row+1):
-			t=DrinkType()
-			t.drink_type=str(typesheet.cell(row=i,column=1).value).encode()
-			t.put()
-		index=0
-		for k in range(1,ingsheet.max_row+1):
-			q= AllIngredients(ing_name=str(ingsheet.cell(row=k, column=1).value).encode())
-			q.index=index			
-			q.put()
-			index+=1
-	"""
+				n.put()	
 	context={}	
 	response=render(request, "drinks/populate.html",context)
 	return response
