@@ -320,4 +320,7 @@ def populate(request):
 			q.index=index			
 			q.put()
 			index+=1
-	return redirect('/populate')
+	
+	context={}	
+	response=render(request, "drinks/newuser.html",context)
+	return response
