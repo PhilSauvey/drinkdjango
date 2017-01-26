@@ -328,7 +328,7 @@ def populate(request):
 				index			
 				all_ing[name]=index
 				index+=1
-			q=allIngredients()
+			q=AllIngredients()
 			q.list=all_ing
 			q.put()
 			
