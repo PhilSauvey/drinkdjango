@@ -1,14 +1,19 @@
 <!doctype html>
 <html>
 <head>
-<title>New User</title>
+<title>Populate</title>
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'drinks/style.css' %}" />
 </head>
 <body>
 <div class="detail_main">
 <li class="navg"><a href="{% url 'drinks:index'%}" class="nav">Drink Library</a></li>
-{{message}}
+<form method="post" action="{% url 'drinks:populate'%}">
+{% csrf_token %}
+<input type="text" name="number1"/>
+<input type="text" name="number2"/>
+<input type="submit"/>
+</form>
 </div>
 </body>
 </html>
