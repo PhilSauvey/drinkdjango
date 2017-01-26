@@ -287,50 +287,24 @@ def createUser(request):
 
 	
 def populate(request):
-	if request.method=="POST":
-		n1=int(request.POST["number1"])
-		n2=int(request.POST["number2"])
-		import openpyxl
 
-		from openpyxl import load_workbook
-		book = load_workbook('database.xlsx')
-		ingsheet = book['Sheet2']
-		typesheet=book['Sheet3']
-		sheet = book['Sheet1']
-		if n1==2:
-			for i in range(1,typesheet.max_row+1):
-				t=DrinkType()
-				t.drink_type=str(typesheet.cell(row=i,column=1).value).encode()
-				t.put()
-		for j in range (n1,n2):
-			type_key=ndb.Key(DrinkType,str(sheet.cell(row=j,column=4).value).encode())
-			a = Drink(parent=type_key)
-			a.drink_name=str(sheet.cell(row=j,column=1).value).encode()
-			a.drink_glass=str(sheet.cell(row=j,column=7).value).encode()
-			a.drink_garnish=str(sheet.cell(row=j, column=5).value).encode()
-			a.drink_inst=str(sheet.cell(row=j, column=6).value).encode()
-			a.drink_slug=str(sheet.cell(row=j, column=8).value).encode()
-			
-			ingr={}
-			for i in range(9,sheet.max_column+1):
-				if sheet.cell(row=j, column=i).value !=None:
-					ing_name=str(sheet.cell(row=1, column=i).value).encode()
-					ing_amount=str(sheet.cell(row=j, column=i).value).encode()
-					ingr[ing_name]=ing_amount
-			a.ingredients=ingr
-			drink_key=a.put()
-		
-		if n2==815:		
-			index=0
-			all_ing={}
-			for k in range(1,ingsheet.max_row+1):
-				name = str(ingsheet.cell(row=k, column=1).value).encode()
-				index			
-				all_ing[name]=index
-				index+=1
-			q=AllIngredients()
-			q.list=all_ing
-			q.put()
+	import openpyxl
+
+	from openpyxl import load_workbook
+	book = load_workbook('database.xlsx')
+	ingsheet = book['Sheet2']
+	typesheet=book['Sheet3']
+	sheet = book['Sheet1']
+	index=0
+	all_ing={}
+	for k in range(1,ingsheet.max_row+1):
+		name = str(ingsheet.cell(row=k, column=1).value).encode()
+		index			
+		all_ing[name]=index
+		index+=1
+	q=AllIngredients()
+	q.list=all_ing
+	q.put()
 			
 	context={'message':"You have succesfully populated the site"}		
 	return render(request, "drinks/populate.html",context)
