@@ -288,8 +288,8 @@ def createUser(request):
 	
 def populate(request):
 	if request.method=="POST":
-		n1=int(request.POST("number1"))
-		n2=int(request.POST("number2"))
+		n1=int(request.POST["number1"])
+		n2=int(request.POST["number2"])
 		import openpyxl
 
 		from openpyxl import load_workbook
