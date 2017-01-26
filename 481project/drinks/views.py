@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.template import loader
-from .models import Drink, AllIngredients, User, DrinkLink, UserIng, DrinkType
+from .models import Drink, Ingredients, AllIngredients, User, DrinkLink, UserIng, DrinkType
 import operator
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -10,7 +10,6 @@ from django.contrib.auth import logout
 from django.contrib import auth
 from django.http import HttpResponseRedirect
 from google.appengine.ext import ndb
-import json
 
 def ing_check(data,owned):
 	for m in data:
@@ -123,7 +122,7 @@ def detail(request, drink_slug):
 	state = login_check(request)
 	drink = Drink.query().filter(Drink.drink_slug==drink_slug).fetch()[0]
 	drink_key=drink.key
-	ing_list=drink.ingredients
+	ing_list=Ingredients.query(ancestor=drink_key).fetch()
 	if drink.drink_glass=="See Note":
 		image_url = ["/static/drinks/Rocks_Glass.png","/static/drinks/Cocktail_Glass.png"]
 	else:
@@ -185,14 +184,13 @@ def results(request):
 				for ing in user_ing:
 					prev_list.append(ing.ing_name)
 	drink_list = Drink.query().fetch()
-	ing_list = AllIngredients.query().fetch()[0].list
-	
+	ing_list = AllIngredients.query().fetch()
 	for ingredients in ing_list:
-		if ingredients in request.POST or ingredients in prev_list:
-			owned_list.append(ingredients)
+		if ingredients.ing_name in request.POST or ingredients.ing_name in prev_list:
+			owned_list.append(ingredients.ing_name)
 			if user:
 				ing=UserIng(parent=user.key)
-				ing.ing_name=ingredients
+				ing.ing_name=ingredients.ing_name
 				ing.put()
 	if len(owned_list)==0:
 		ing_list.sort(key=lambda x: x.index)
@@ -205,11 +203,12 @@ def results(request):
 		for drinks in drink_list:
 			unmakeable=0
 			missing_ing=[]
-			d_ing_list=drinks.ingredients
-			for i in d_ing_list: 
-				if i not in owned_list:
+			drink_key=drinks.key
+			ing_list=Ingredients.query(ancestor=drink_key).fetch()
+			for i in ing_list: 
+				if i.ing_name not in owned_list:
 					unmakeable=1
-					missing_ing.append(i)
+					missing_ing.append(i.ing_name)
 			missing_list.append(missing_ing)
 			if unmakeable==0:
 				make_list.append(drinks)
@@ -223,15 +222,16 @@ def results(request):
 	
 		sorted_buy = sorted(buy_list.items(), key=operator.itemgetter(1))
 		
+	buy=sorted_buy[len(sorted_buy)-1]
 	make_list.sort(key=lambda x:x.drink_name)
-	response=render(request, "drinks/results.html",{"make_list":make_list,"missing_list":missing_list,"buy":sorted_buy},)
+	response=render(request, "drinks/results.html",{"make_list":make_list,"missing_list":missing_list,"buy":buy},)
 	if user:
 		response.set_cookie('searched',"True")
 	return response
 
 def search(request):
-	ing_list = AllIngredients.query().fetch()[0]
-	ing_list= sorted(ing_list.list.items(), key=operator.itemgetter(1))
+	ing_list = AllIngredients.query().fetch()
+	ing_list.sort(key=lambda x: x.index)
 	user_list=[]
 	context = {"ing_list":ing_list}
 	if 'user' in request.COOKIES:
@@ -284,46 +284,52 @@ def createUser(request):
 	if status==1:
 		response.set_cookie('user', username)
 	return response
-		
-def populate(request):
-	import openpyxl
 
-	from openpyxl import load_workbook
-	book = load_workbook('database.xlsx')
-	ingsheet = book['Sheet2']
-	typesheet=book['Sheet3']
-	sheet = book['Sheet1']
-	for i in range(1,typesheet.max_row+1):
-		t=DrinkType()
-		t.drink_type=str(typesheet.cell(row=i,column=1).value).encode()
-		t.put()
-	for j in range (2,sheet.max_row+1):
-		type_key=ndb.Key(DrinkType,str(sheet.cell(row=j,column=4).value).encode())
-		a = Drink(parent=type_key)
-		a.drink_name=str(sheet.cell(row=j,column=1).value).encode()
-		a.drink_glass=str(sheet.cell(row=j,column=7).value).encode()
-		a.drink_garnish=str(sheet.cell(row=j, column=5).value).encode()
-		a.drink_inst=str(sheet.cell(row=j, column=6).value).encode()
-		a.drink_slug=str(sheet.cell(row=j, column=8).value).encode()
-		
-		ingr={}
-		for i in range(9,sheet.max_column+1):
-			if sheet.cell(row=j, column=i).value !=None:
-				ing_name=str(sheet.cell(row=1, column=i).value).encode()
-				ing_amount=str(sheet.cell(row=j, column=i).value).encode()
-				ingr[ing_name]=ing_amount
-		a.ingredients=ingr
-		drink_key=a.put()
+	
+def populate(request):
+	if request.method=="POST":
+		n1=int(request.POST("number1"))
+		n2=int(request.POST("number2"))
+		import openpyxl
+
+		from openpyxl import load_workbook
+		book = load_workbook('database.xlsx')
+		ingsheet = book['Sheet2']
+		typesheet=book['Sheet3']
+		sheet = book['Sheet1']
+		if n1==2:
+			for i in range(1,typesheet.max_row+1):
+				t=DrinkType()
+				t.drink_type=str(typesheet.cell(row=i,column=1).value).encode()
+				t.put()
+		for j in range (n1,n2):
+			type_key=ndb.Key(DrinkType,str(sheet.cell(row=j,column=4).value).encode())
+			a = Drink(parent=type_key)
+			a.drink_name=str(sheet.cell(row=j,column=1).value).encode()
+			a.drink_glass=str(sheet.cell(row=j,column=7).value).encode()
+			a.drink_garnish=str(sheet.cell(row=j, column=5).value).encode()
+			a.drink_inst=str(sheet.cell(row=j, column=6).value).encode()
+			a.drink_slug=str(sheet.cell(row=j, column=8).value).encode()
 			
-	index=0
-	all_ing={}
-	for k in range(1,ingsheet.max_row+1):
-		name = str(ingsheet.cell(row=k, column=1).value).encode()
-		index			
-		all_ing[name]=index
-		index+=1
-	q=allIngredients()
-	q.list=all_ing
-	q.put()
-	context={'message':"You have succesfully populated the site"}
+			ingr={}
+			for i in range(9,sheet.max_column+1):
+				if sheet.cell(row=j, column=i).value !=None:
+					ing_name=str(sheet.cell(row=1, column=i).value).encode()
+					ing_amount=str(sheet.cell(row=j, column=i).value).encode()
+					ingr[ing_name]=ing_amount
+			a.ingredients=ingr
+			drink_key=a.put()
+		
+		if n2==815:		
+			index=0
+			all_ing={}
+			for k in range(1,ingsheet.max_row+1):
+				name = str(ingsheet.cell(row=k, column=1).value).encode()
+				index			
+				all_ing[name]=index
+				index+=1
+			q=allIngredients()
+			q.list=all_ing
+			q.put()
+			context={'message':"You have succesfully populated the site"}
 	return render(request, "drinks/populate.html",context)
