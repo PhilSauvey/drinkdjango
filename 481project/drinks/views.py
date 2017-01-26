@@ -331,5 +331,6 @@ def populate(request):
 			q=allIngredients()
 			q.list=all_ing
 			q.put()
-			context={'message':"You have succesfully populated the site"}
+			
+	context={'message':"You have succesfully populated the site"}		
 	return render(request, "drinks/populate.html",context)
