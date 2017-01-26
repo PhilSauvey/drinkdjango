@@ -37,11 +37,10 @@
 {%endif%}
 
 {{message}}
-
 <h1>{{drink}}</h1>
 <table class="ings">
-{% for ing in ing_list%}
-	<tr><td class="ing_name">{{ing.ing_name}}:</td><td class="ing_amnt">{{ing.ing_amount}}</td></tr>
+{% for ing, amt in ing_list.items%}
+	<tr><td class="ing_name">{{ing}}:</td><td class="ing_amnt">{{amt}}</td></tr>
 {%endfor%}
 </table>
 <p>Special Instructions: {{drink.drink_inst}}</p>

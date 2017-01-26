@@ -20,10 +20,14 @@
 <h2>Search Results</h2>
 {% if make_list%}
 	<h3>You can make {{make_list|length}} Drinks</h3>
-	<h3>And if you buy {{buy.0}} you can make {{buy.1}} more</h3>
 	{% for drink in make_list %}
 		<a href="{% url 'drinks:detail' drink.drink_slug%}" class="drink_button">{{drink.drink_name}}</a><br/>
 	{%endfor%}
+	<p>
+	{%for b in buy%}
+		And if you buy {{b.0}} you can make {{b.1}} more<br/>
+	{%endfor%}
+	</p>
 {%else%}
 	<p> No Drinks are available.</p>
 {%endif%}

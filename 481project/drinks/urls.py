@@ -10,5 +10,6 @@ urlpatterns = [
 	url('results',views.results, name='results'),
 	url('mydrinks',views.mydrinks, name='mydrinks'),
 	url('newuser',views.createUser, name='newuser'),
+	url('populate',views.populate,name="populate"),
 ]
 

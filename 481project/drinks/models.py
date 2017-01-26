@@ -10,31 +10,28 @@ class Drink(ndb.Model):
     drink_inst = ndb.StringProperty()
     drink_glass = ndb.StringProperty()
     drink_slug = ndb.StringProperty()
+    ingredients= ndb.JsonProperty()
 
     def __str__(self):
         return self.drink_name
 
-@python_2_unicode_compatible
-class Ingredients(ndb.Model):
-    ing_name = ndb.StringProperty()
-    ing_amount = ndb.StringProperty()
-    def __str__(self):
-        return self.ing_name
-
-@python_2_unicode_compatible    
+ 
 class AllIngredients(ndb.Model):
-    ing_name = ndb.StringProperty()
-    index = ndb.IntegerProperty()
-	
-    def __str__(self):
-        return self.ing_name
+    list= ndb.JsonProperty()
 		 
 class User(ndb.Model):
 	username = ndb.StringProperty()
 	password = ndb.StringProperty()
 	def __str__(self):
 		return self.username
-	
+
+@python_2_unicode_compatible
+class Ingredients(ndb.Model):
+    ing_name = ndb.StringProperty()
+    ing_amount = ndb.StringProperty()
+    def __str__(self):
+        return self.ing_name		
+		
 class DrinkLink(ndb.Model):
 	user_key= ndb.KeyProperty()
 	drink_key= ndb.KeyProperty()
