@@ -188,9 +188,13 @@ def results(request):
 	drink_list = Drink.query().fetch()
 	ing_list = AllIngredients.query().fetch()[0].list
 	
-	for ingredients in ing_list:
-		if ingredients in request.POST or ingredients in prev_list:
-			owned_list.append(ingredients)
+	
+	if prev_list:
+			owned_list=prev_list
+	else
+		for ingredients in ing_list:
+			if ingredients in request.POST:
+				owned_list.append(ingredients)
 	if len(owned_list)==0:
 		if user:
 			ing=UserIng(parent=user.key)
