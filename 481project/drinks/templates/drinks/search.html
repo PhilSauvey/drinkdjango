@@ -29,8 +29,8 @@
 {% for ingredient in ing_list%}
 	{% if forloop.counter0|divisibleby:3 %}<tr>{% endif %}
 		{% if ingredient.ing_name in user_ing%}
-			<label for='{{forloop.counter}}'><td class="search"><input class="search_check" type="checkbox" name='{{ingredient.0}}' id='{{forloop.counter}}' value='{{ingredient.0}}' checked/>
-			{{ingredient.0}}</label></td>
+			<td class="search"><input class="search_check" type="checkbox" name='{{ingredient.0}}' id='{{forloop.counter}}' value='{{ingredient.0}}' checked/>
+			<label for='{{forloop.counter}}'>{{ingredient.0}}</label></td>
 		{%else%}
 			<td class="search"><input class="search_check" type="checkbox" name='{{ingredient.0}}' id='{{forloop.counter}}' value='{{ingredient.0}}'/>
 			<label for='{{forloop.counter}}'>{{ingredient.0}}</label></td>
