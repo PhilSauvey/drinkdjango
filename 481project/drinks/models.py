@@ -37,7 +37,7 @@ class DrinkLink(ndb.Model):
 	drink_key= ndb.KeyProperty()
 	
 class UserIng(ndb.Model):
-	ing_name=ndb.StringProperty()
+	ing_list=ndb.JsonProperty()
 	
 class DrinkType(ndb.Model):
 	drink_type=ndb.StringProperty()

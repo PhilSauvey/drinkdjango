@@ -178,23 +178,24 @@ def results(request):
 		if user:
 			user=user[0]
 			user_ing=UserIng.query(ancestor=user.key).fetch()
-			if request.method=="POST":
-				for ing in user_ing:
-					ing.key.delete()
-			else:
-				for ing in user_ing:
-					prev_list.append(ing.ing_name)
+			if user_ing:
+				prev_list=user_ing[0].ing_list			
+			elif request.method=="POST":
+				prev_list={}
+				if user_ing:
+					user_ing[0].key.delete()
+
 	drink_list = Drink.query().fetch()
 	ing_list = AllIngredients.query().fetch()[0].list
 	
 	for ingredients in ing_list:
 		if ingredients in request.POST or ingredients in prev_list:
 			owned_list.append(ingredients)
-			if user:
-				ing=UserIng(parent=user.key)
-				ing.ing_name=ingredients
-				ing.put()
 	if len(owned_list)==0:
+		if user:
+			ing=UserIng(parent=user.key)
+			ing.ing_list=owned_list
+			ing.put()
 		ing_list.sort(key=lambda x: x.index)
 		return render(request, "drinks/search.html", {
 			"ing_list":ing_list,
