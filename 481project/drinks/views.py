@@ -238,9 +238,8 @@ def search(request):
 	if 'user' in request.COOKIES:
 		user=User.query().filter(User.username==request.COOKIES['user']).fetch()[0]
 		user_ing=UserIng.query(ancestor=user.key).fetch()
-
-		for ing in user_ing:
-			user_list.append(ing.ing_name)	
+		if user_ing:
+			user_list=user_ing[0].ing_list	
 	context["user_ing"]=user_list
 	return render(request, "drinks/search.html",context)
 
