@@ -20,12 +20,18 @@
 {%endif%}
 </ul>
 <h2>Search By Ingredients</h2>
-<p>Select all the ingredients you own to generate a<br/>
-list of drinks you can make using those ingredients.</p>
+
 {%if error_message%}<p><strong>{{error_message}}</strong></p>{%endif%}
 
 <form action = "{% url 'drinks:results' %}" method="post">
 {% csrf_token %}
+{% if user_ing|length > 1%}
+	<input type="radio" name="search_type" value="make_list" id="mlist" checked><label for="mlist">Search for drinks you can make by selecting all ingredients you own</label><br/>
+	<input type="radio" name="search_type" value="contain_list" id="clist"><label for="clist">Search for drinks containing ONE selected ingredient</label>
+{% else%}
+	<input type="radio" name="search_type" value="make_list" id="mlist"><label for="mlist">Search for drinks you can make by selecting all ingredients you own</label><br/>
+	<input type="radio" name="search_type" value="contain_list" id="clist" checked><label for="clist">Search for drinks containing ONE selected ingredient</label>
+{%endif%}
 <table class="search">
 {% for ingredient in ing_list%}
 	{% if forloop.counter0|divisibleby:3 %}<tr>{% endif %}

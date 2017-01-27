@@ -38,6 +38,7 @@ class DrinkLink(ndb.Model):
 	
 class UserIng(ndb.Model):
 	ing_list=ndb.JsonProperty()
+	search_type=ndb.StringProperty()
 	
 class DrinkType(ndb.Model):
 	drink_type=ndb.StringProperty()

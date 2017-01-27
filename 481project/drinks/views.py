@@ -180,6 +180,7 @@ def results(request):
 			user_ing=UserIng.query(ancestor=user.key).fetch()
 			if user_ing:
 				prev_list=user_ing[0].ing_list
+				sType=user_ing[0].search_type
 				user_ing[0].key.delete()
 		
 		if request.method=="POST":
@@ -196,6 +197,7 @@ def results(request):
 		for ingredients in ing_list:
 			if ingredients in request.POST:
 				owned_list.append(ingredients)
+		sType=request.POST["search_type"]
 	if len(owned_list)==0:
 		ing_list.sort(key=lambda x: x.index)
 		return render(request, "drinks/search.html", {
@@ -205,32 +207,47 @@ def results(request):
 		if user:
 			ing=UserIng(parent=user.key)
 			ing.ing_list=owned_list
+			ing.search_type=sType
 			ing.put()
-		missing_list=[]
-		buy_list={}
-		for drinks in drink_list:
-			unmakeable=0
-			missing_ing=[]
-			d_ing_list=drinks.ingredients
-			for i in d_ing_list: 
-				if i not in owned_list:
-					unmakeable=1
-					missing_ing.append(i)
-			missing_list.append(missing_ing)
-			if unmakeable==0:
-				make_list.append(drinks)
-		for list in missing_list:
-			if len(list)==1:
-				if list[0] in buy_list.keys():
-					buy_list[list[0]]+=1
-				else:
-					buy_list[list[0]]=1
+		
+		context={}
+		if sType=="make_list":
+			missing_list=[]
+			buy_list={}
+			for drinks in drink_list:
+				unmakeable=0
+				missing_ing=[]
+				d_ing_list=drinks.ingredients
+				for i in d_ing_list: 
+					if i not in owned_list:
+						unmakeable=1
+						missing_ing.append(i)
+				missing_list.append(missing_ing)
+				if unmakeable==0:
+					make_list.append(drinks)
+			for list in missing_list:
+				if len(list)==1:
+					if list[0] in buy_list.keys():
+						buy_list[list[0]]+=1
+					else:
+						buy_list[list[0]]=1
 
+		
+			sorted_buy = sorted(buy_list.items(), key=operator.itemgetter(1))
+			context["buy"]=sorted_buy[len(sorted_buy)-1]
+			context["message"]="You can make "+str(len(make_list))+" drinks"
+		
+		elif sType=="contain_list":
+			for drinks in drink_list:
+				d_ing_list=drinks.ingredients
+				for i in d_ing_list:
+					if i in owned_list:
+						make_list.append(drinks)	
+			context["message"]=owned_list[0]+" is used to make "+str(len(make_list))+" drinks."
 	
-		sorted_buy = sorted(buy_list.items(), key=operator.itemgetter(1))
-		buy=sorted_buy[len(sorted_buy)-1]
 	make_list.sort(key=lambda x:x.drink_name)
-	response=render(request, "drinks/results.html",{"make_list":make_list,"missing_list":missing_list,"buy":buy},)
+	context["make_list"]=make_list
+	response=render(request, "drinks/results.html",context)
 	if user:
 		response.set_cookie('searched',"True")
 	return response
