@@ -201,9 +201,11 @@ def results(request):
 	if len(owned_list)==0:
 		ing_list= sorted(ing_list.items(), key=operator.itemgetter(1))
 		user_ing[0].key.delete()
-		return render(request, "drinks/search.html", {
+		response = render(request, "drinks/search.html", {
 			"ing_list":ing_list,
 			"error_message": "You didn't select any ingredients.",})
+		response.delete_cookie('searched')
+		return response
 	else:
 		if user:
 			ing=UserIng(parent=user.key)
