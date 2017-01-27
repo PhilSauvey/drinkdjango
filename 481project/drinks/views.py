@@ -179,7 +179,8 @@ def results(request):
 			user=user[0]
 			user_ing=UserIng.query(ancestor=user.key).fetch()
 			if user_ing:
-				prev_list=user_ing[0].ing_list			
+				prev_list=user_ing[0].ing_list
+				user_ing[0].key.delete()
 		
 		if request.method=="POST":
 			prev_list={}
