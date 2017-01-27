@@ -20,6 +20,8 @@
 {%endif%}
 </ul>
 <h2>Search By Ingredients</h2>
+<p>Select all the ingredients you own to generate a<br/>
+list of drinks you can make using those ingredients.</p>
 {%if error_message%}<p><strong>{{error_message}}</strong></p>{%endif%}
 
 <form action = "{% url 'drinks:results' %}" method="post">
