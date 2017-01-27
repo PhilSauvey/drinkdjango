@@ -240,12 +240,20 @@ def results(request):
 			context["message"]="You can make "+str(len(make_list))+" drinks"
 		
 		elif sType=="contain_list":
-			for drinks in drink_list:
-				d_ing_list=drinks.ingredients
-				for i in d_ing_list:
-					if i in owned_list:
-						make_list.append(drinks)	
-			context["message"]=owned_list[0]+" is used to make "+str(len(make_list))+" drinks."
+			if len(owned_list)>1:
+				ing_list= sorted(ing_list.items(), key=operator.itemgetter(1))
+				response = render(request, "drinks/search.html", {
+					"ing_list":ing_list,
+					"error_message": "You selected too many ingredients.",})
+				response.delete_cookie('searched')
+				return response
+			else:
+				for drinks in drink_list:
+					d_ing_list=drinks.ingredients
+					for i in d_ing_list:
+						if i in owned_list:
+							make_list.append(drinks)	
+				context["message"]=owned_list[0]+" is used to make "+str(len(make_list))+" drinks."
 	
 	make_list.sort(key=lambda x:x.drink_name)
 	context["make_list"]=make_list
