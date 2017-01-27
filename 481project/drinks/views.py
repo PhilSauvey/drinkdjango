@@ -191,7 +191,7 @@ def results(request):
 	
 	if prev_list:
 			owned_list=prev_list
-	else
+	else:
 		for ingredients in ing_list:
 			if ingredients in request.POST:
 				owned_list.append(ingredients)
