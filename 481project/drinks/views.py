@@ -222,7 +222,7 @@ def results(request):
 
 	
 		sorted_buy = sorted(buy_list.items(), key=operator.itemgetter(1))
-		buy=sorted_buy[sorted_buy.length-1]
+		buy=sorted_buy[length(sorted_buy)-1]
 	make_list.sort(key=lambda x:x.drink_name)
 	response=render(request, "drinks/results.html",{"make_list":make_list,"missing_list":missing_list,"buy":buy},)
 	if user:
