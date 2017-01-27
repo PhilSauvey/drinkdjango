@@ -180,31 +180,31 @@ def results(request):
 			user_ing=UserIng.query(ancestor=user.key).fetch()
 			if user_ing:
 				prev_list=user_ing[0].ing_list			
-			elif request.method=="POST":
-				prev_list={}
-				if user_ing:
-					user_ing[0].key.delete()
+		
+		if request.method=="POST":
+			prev_list={}
+			if user_ing:
+				user_ing[0].key.delete()
 
 	drink_list = Drink.query().fetch()
 	ing_list = AllIngredients.query().fetch()[0].list
 	
-	
-	if prev_list:
+	if len(prev_list)!=0:
 			owned_list=prev_list
 	else:
 		for ingredients in ing_list:
 			if ingredients in request.POST:
 				owned_list.append(ingredients)
 	if len(owned_list)==0:
-		if user:
-			ing=UserIng(parent=user.key)
-			ing.ing_list=owned_list
-			ing.put()
 		ing_list.sort(key=lambda x: x.index)
 		return render(request, "drinks/search.html", {
 			"ing_list":ing_list,
 			"error_message": "You didn't select any ingredients.",})
 	else:
+		if user:
+			ing=UserIng(parent=user.key)
+			ing.ing_list=owned_list
+			ing.put()
 		missing_list=[]
 		buy_list={}
 		for drinks in drink_list:

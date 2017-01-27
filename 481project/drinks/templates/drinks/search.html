@@ -25,10 +25,9 @@
 <form action = "{% url 'drinks:results' %}" method="post">
 {% csrf_token %}
 <table class="search">
-
 {% for ingredient in ing_list%}
 	{% if forloop.counter0|divisibleby:3 %}<tr>{% endif %}
-		{% if ingredient.ing_name in user_ing%}
+		{% if ingredient.0 in user_ing%}
 			<td class="search"><input class="search_check" type="checkbox" name='{{ingredient.0}}' id='{{forloop.counter}}' value='{{ingredient.0}}' checked/>
 			<label for='{{forloop.counter}}'>{{ingredient.0}}</label></td>
 		{%else%}
