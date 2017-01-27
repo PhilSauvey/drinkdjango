@@ -15,7 +15,7 @@
 {% if request.COOKIES.drink and request.COOKIES.user%}
 <li class="navg"><a href="{% url 'drinks:detail' request.COOKIES.drink %}" class="nav">View Last Drink</a></li>
 {%endif%}
-{% if request.COOKIES.searched and request.COOKIES.user%}
+{% if request.COOKIES.searched and request.COOKIES.user and not error_message%}
 <li class="navg"><a href="{% url 'drinks:results' %}" class="nav">View Last Search Results</a></li>
 {%endif%}
 </ul>
