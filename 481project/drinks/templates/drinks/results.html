@@ -21,7 +21,9 @@
 {% if make_list%}
 	<h3>{{message}}</h3>
 	{% if buy%}
-		<h4>And if you buy {{buy.0}} you can make {{buy.1}} more</h4>
+		<p>
+		And if you buy {{b.0}} you can make {{b.1}} more<br/>
+		</p>
 	{%endif%}
 	{% for drink in make_list %}
 		<a href="{% url 'drinks:detail' drink.drink_slug%}" class="drink_button">{{drink.drink_name}}</a><br/>

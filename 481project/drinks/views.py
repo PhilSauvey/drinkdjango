@@ -11,6 +11,7 @@ from django.contrib import auth
 from django.http import HttpResponseRedirect
 from google.appengine.ext import ndb
 import json
+import hashlib
 
 def ing_check(data,owned):
 	for m in data:
@@ -44,26 +45,55 @@ def login_check(request):
 				state=1
 	return state
 	
-def index(request):
-	
+def index(request):	
+	dTypes=["All"]
 	types=DrinkType.query().fetch()
 	types.sort(key=lambda x:x.drink_type)
+	for t in types:
+		dTypes.append(t.drink_type)
 	drink_lists = ()
 	try:
 		type = request.GET["type"]
 	except (MultiValueDictKeyError):
 		drink_lists = ()
 	else:
-		type=DrinkType.query().filter(DrinkType.drink_type==type).fetch()
-		if type:
-			type=type[0]
-			type_key=ndb.Key(DrinkType,str(type))
-			list=Drink.query(ancestor=type_key).fetch()
+		if type=="All":
+			list=Drink.query().fetch()
 			list.sort(key=lambda x: x.drink_name)
+			type=type+" Cocktails"
 			drink_lists=(type,list)
+		else:	
+			type=DrinkType.query().filter(DrinkType.drink_type==type).fetch()
+			if type:
+				type=type[0]
+				type_key=ndb.Key(DrinkType,str(type))
+				list=Drink.query(ancestor=type_key).fetch()
+				list.sort(key=lambda x: x.drink_name)
+				type=type.drink_type+" Cocktails"
+				drink_lists=(type,list)
+	try:
+		search = request.GET["search"].lower()
+	except (MultiValueDictKeyError):
+		placeholder = 0
+	else:
+		dList = []
+		type= search.lower()
+		list=Drink.query().fetch()
+		list.sort(key=lambda x: x.drink_name)
+		for d in list:
+			name = d.drink_name.lower()
+			try:
+				ind = name.index(type)
+			except (ValueError):
+				placeholder = 0
+			else:	
+				dList.append(d)
+		type="Search Results For: "+type
+		drink_lists=(type,dList)
+		
 	
 	state=login_check(request)
-	context = {"drink_lists":drink_lists,"types":types}
+	context = {"drink_lists":drink_lists,"types":dTypes}
 	response=render(request,"drinks/index.html",context)
 	
 	if 'user' in request.COOKIES:
@@ -79,7 +109,9 @@ def index(request):
 	else:
 		if state==1:
 			username = request.POST["username"]
-			password = request.POST["password"]
+			password = hashlib.md5()
+			password.update(request.POST["password"])
+			password = password.hexdigest()
 			if User.query().filter(User.username==username).filter(User.password==password).fetch():
 				user=User.query().filter(User.username==username).filter(User.password==password).fetch()[0]
 				context["username"]=user
@@ -91,7 +123,6 @@ def index(request):
 				response=render(request,"drinks/index.html",context)
 	
 	return response
-# Create your views here.
 
 
 def detail(request, drink_slug):
@@ -126,10 +157,13 @@ def detail(request, drink_slug):
 	ing_list=drink.ingredients
 	if drink.drink_glass=="See Note":
 		image_url = ["/static/drinks/Rocks_Glass.png","/static/drinks/Cocktail_Glass.png"]
+		glass = "Rocks or Martini"
 	else:
 		image_url = [glasses[drink.drink_glass]]
-	response = render(request, "drinks/detail.html",{"drink":drink,"ing_list":ing_list,"img_url":image_url})
-	context={"drink":drink,"ing_list":ing_list,"img_url":image_url}
+		glass = str(drink.drink_glass)
+	
+	response = render(request, "drinks/detail.html",{"drink":drink,"ing_list":ing_list,"img_url":image_url,"glass":glass})
+	context={"drink":drink,"ing_list":ing_list,"img_url":image_url,"glass":glass}
 	if state==3:
 		response.delete_cookie('user')
 		response.delete_cookie('searched')
@@ -155,7 +189,9 @@ def detail(request, drink_slug):
 	else:
 		if state==1:
 			username = request.POST["username"]
-			password = request.POST["password"]
+			password = hashlib.md5()
+			password.update(request.POST["password"])
+			password = password.hexdigest()
 			if User.query().filter(User.username==username).filter(User.password==password).fetch():
 				user=User.query().filter(User.username==username).filter(User.password==password).fetch()[0]
 				response=render(request, "drinks/detail.html",{"drink":drink,"ing_list":ing_list,"username":user,"img_url":image_url})
@@ -280,6 +316,13 @@ def mydrinks(request):
 		user=User.query().filter(User.username==request.COOKIES['user']).fetch()[0]
 		drink_list=DrinkLink.query(DrinkLink.user_key==user.key).fetch()
 		drinks=[]
+		if "delete" in request.POST:
+			val = request.POST["delete"]
+			for obj in drink_list:
+				if obj.drink_key.get().drink_slug==val:
+					drink_list.remove(obj)
+					obj.key.delete()
+					
 		for obj in drink_list:
 			drinks.append(obj.drink_key.get())
 		context={"username":user,"drinks":drinks, 'drink_list':drink_list}
@@ -306,7 +349,9 @@ def createUser(request):
 				else:
 					u=User()
 					u.username=username
-					u.password=password
+					p = hashlib.md5()
+					p.update(password)
+					u.password=p.hexdigest()
 					u.put()
 					status=1
 					context["username"]=u

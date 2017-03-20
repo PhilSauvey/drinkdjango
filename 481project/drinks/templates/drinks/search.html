@@ -4,6 +4,66 @@
 <title>Drink Database Search Page</title>
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'drinks/style.css' %}" />
+<script>
+var current;
+window.onload = function(){
+	document.getElementById("reset").addEventListener("click",reset)
+	items = document.getElementsByClassName("search_check");
+	Array.from(items).forEach(setup);
+	mlist = document.getElementById("mlist");
+	clist = document.getElementById("clist");
+	mlist.addEventListener("click",toggleA);
+	clist.addEventListener("click",toggleB);
+	if (mlist.checked){
+		mlist.parentElement.style.backgroundColor = "#7c1d1d";
+	}else{
+		clist.parentElement.style.backgroundColor = "#7c1d1d";
+	}
+}
+
+function toggleA(){
+	mlist = document.getElementById("mlist");
+	clist = document.getElementById("clist");
+	
+	mlist.parentElement.style.backgroundColor = "#7c1d1d";
+	clist.parentElement.style.backgroundColor = "#1f3860";
+}
+
+function toggleB(){
+	mlist = document.getElementById("mlist");
+	clist = document.getElementById("clist");
+	
+	mlist.parentElement.style.backgroundColor = "#1f3860";
+	clist.parentElement.style.backgroundColor = "#7c1d1d";
+}
+
+function reset(){
+	items = document.getElementsByClassName("search_check");
+	Array.from(items).forEach(rst);
+}
+
+function rst(item,index){
+	item.checked=false;
+	item.parentElement.style.backgroundColor = "#1f3860";
+}
+
+function setup(item,index){
+	item.addEventListener("click",function(){
+		toggle(item);
+	});
+	if (item.checked==true){
+	item.parentElement.style.backgroundColor = "#7c1d1d";
+	}
+}
+function toggle(item){
+	if (item.checked==true){
+	item.parentElement.style.backgroundColor = "#7c1d1d";
+	}else {
+		item.parentElement.style.backgroundColor = "#1f3860";
+	}
+}
+
+</script>
 </head>
 <body>
 <div id="search_main">
@@ -22,17 +82,16 @@
 <h2>Search By Ingredients</h2>
 
 {%if error_message%}<p><strong>{{error_message}}</strong></p>{%endif%}
-
 <form action = "{% url 'drinks:results' %}" method="post">
 {% csrf_token %}
-{% if user_ing|length > 1%}
-	<input type="radio" name="search_type" value="make_list" id="mlist" checked><label for="mlist">Search for drinks you can make by selecting all ingredients you own</label><br/>
-	<input type="radio" name="search_type" value="contain_list" id="clist"><label for="clist">Search for drinks containing ONE selected ingredient</label>
-{% else%}
-	<input type="radio" name="search_type" value="make_list" id="mlist"><label for="mlist">Search for drinks you can make by selecting all ingredients you own</label><br/>
-	<input type="radio" name="search_type" value="contain_list" id="clist" checked><label for="clist">Search for drinks containing ONE selected ingredient</label>
-{%endif%}
 <table class="search">
+{% if user_ing|length > 1%}
+	<tr><td class="search" colspan="3"><input type="radio" name="search_type" value="make_list" id="mlist" checked><label for="mlist">Search for drinks you can make by selecting all ingredients you own</label></td></tr>
+	<tr><td class="search" colspan="3"><input type="radio" name="search_type" value="contain_list" id="clist"><label for="clist">Search for drinks containing ONE selected ingredient</label></td></tr>
+{% else%}
+	<tr><td class="search" colspan="3"><input type="radio" name="search_type" value="make_list" id="mlist"><label for="mlist">Search for drinks you can make by selecting all ingredients you own</label><br/></td></tr>
+	<tr><td class="search" colspan="3"><input type="radio" name="search_type" value="contain_list" id="clist" checked><label for="clist">Search for drinks containing ONE selected ingredient</label></td></tr>
+{%endif%}
 {% for ingredient in ing_list%}
 	{% if forloop.counter0|divisibleby:3 %}<tr>{% endif %}
 		{% if ingredient.0 in user_ing%}
@@ -45,7 +104,7 @@
 	{% if forloop.counter|divisibleby:3%}</tr>
 	{%elif forloop.last%}<td class="search"></td><td class="search"></td></tr>{% endif %}
 {%endfor%}
-<tr><td></td><td></td><td><input type="submit" value="Search"/></td></tr></table>
+<tr><td><button id="reset" onclick="return false;">Reset</button></td><td></td><td><input type="submit" value="Search"/></td></tr></table>
 </form>
 </div>
 </body>

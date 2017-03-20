@@ -46,26 +46,29 @@
 {%endif%}
 
 <form method="get" action="{%url 'drinks:index'%}">
+{% csrf_token %}
 <select name="type">
 <option value="">&nbsp;</option>
 {% for t in types%}
-<option value="{{t.drink_type}}">{{t.drink_type}}</option>
+<option value="{{t}}">{{t}}</option>
 {%endfor%}
 </select>
 <input type="submit" value="View Drinks"/>
-
 </form>
+<form method="get" action="{%url 'drinks:index'%}">
+{% csrf_token %}
+<input type="text" name="search"/><input type="submit" value="Search Drinks"/></form>
 
 {% if drink_lists%}
 	<div class="type">
-	<h4>{{drink_lists.0.drink_type}} Cocktails</h4>
+	<h4>{{drink_lists.0}}</h4>
 	
 	{%for d in drink_lists.1%}
 		<a href="{% url 'drinks:detail' d.drink_slug%}" class="drink_button">{{d.drink_name}}</a><br/>
 	{%endfor%}
 	</div>
 {%else%}
-	<h4> Please Select A Drink Category</h4>
+	<h4> Please Select A Drink Category or Enter a Search Term</h4>
 {%endif%}
 </div>
 </body>

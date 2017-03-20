@@ -43,7 +43,7 @@ table.login{
 	border-bottom: 1px solid #1f3860;
 
 }
-table.new_user{
+table.new_user, table.myDrinks{
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 5px;
@@ -51,6 +51,7 @@ table.new_user{
 	padding-bottom: 5px;
 
 }
+
 
 .lib_main{
 	min-height: 100%;
@@ -177,7 +178,7 @@ ul li.navg{
 	display: inline;
 	margin: 0px;
 }
-.nav, input[type="submit"]{
+.nav, input[type="submit"], button{
 	-webkit-appearance: menu-button;
     -moz-appearance: button;
     appearance: button;

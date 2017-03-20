@@ -19,10 +19,17 @@
 </ul>
 <h3>My Drink Page</h3>
 
-{%if drinks%}	
+{%if drinks%}
+	<form action="{% url 'drinks:mydrinks'%}" method="post">
+	{% csrf_token %}
+	<table class="myDrinks">
+	<tr><th>Drink</th><th>Delete?</th>
 	{%for drink in drinks%}
-		<a href="{% url 'drinks:detail' drink.drink_slug%}" class="drink_button">{{drink.drink_name}}</a><br/>
+		<tr><td><a href="{% url 'drinks:detail' drink.drink_slug%}" class="drink_button">{{drink.drink_name}}</a></td>
+		<td><input type="radio" name="delete" value="{{drink.drink_slug}}"/></td></tr>
 	{%endfor%}
+	</table>
+	<input type="submit" value="Delete Selected"/></form>
 {%else%}
 	<p>You have not added any drinks yet</p>
 {%endif%}
