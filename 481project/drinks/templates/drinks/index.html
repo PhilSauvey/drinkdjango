@@ -45,7 +45,7 @@
 	<tr><td></td><td><input type="submit" value="Login"/></td></tr></table></form>
 {%endif%}
 
-<form method="get" action="{%url 'drinks:index'%}">
+<form method="post" action="{%url 'drinks:index'%}">
 {% csrf_token %}
 <select name="type">
 <option value="">&nbsp;</option>
@@ -55,7 +55,7 @@
 </select>
 <input type="submit" value="View Drinks"/>
 </form>
-<form method="get" action="{%url 'drinks:index'%}">
+<form method="post" action="{%url 'drinks:index'%}">
 {% csrf_token %}
 <input type="text" name="search"/><input type="submit" value="Search Drinks"/></form>
 

@@ -53,7 +53,7 @@ def index(request):
 		dTypes.append(t.drink_type)
 	drink_lists = ()
 	try:
-		type = request.GET["type"]
+		type = request.POST["type"]
 	except (MultiValueDictKeyError):
 		drink_lists = ()
 	else:
@@ -72,7 +72,7 @@ def index(request):
 				type=type.drink_type+" Cocktails"
 				drink_lists=(type,list)
 	try:
-		search = request.GET["search"].lower()
+		search = request.POST["search"].lower()
 	except (MultiValueDictKeyError):
 		placeholder = 0
 	else:
